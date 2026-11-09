@@ -26,4 +26,31 @@ public class ABB<K, V> implements IMapeamento<K, V>{
 	public double getTempo() {
 		return (termino - inicio) / 1_000_000;
 	}
+	public Lista<V> recortar(K chaveInicio, K chaveFinal){
+		Lista<V> resultado = new Lista<>();
+
+		if (comparar(chaveInicio, chaveFinal) > 0){ // chave inicial > final
+			return resultado;
+		}
+		recortar(raiz, chaveInicio, chaveFinal, resultado);
+
+		return resultado;
+	}
+	private void recortar(No<K, V> no, K inicio, K fim, Lista<V> lista){ // recebe nó e limites de recorte
+		if(no == null){
+			return;
+		} //compara a chave do no com os limites de intervalo
+		int comparacaoInicio = comparar(no.getChave(), inicio);
+		int comparacaoFim = comparar(no.getChave(), fim);
+
+		if (comparacaoInicio > 0){  // procura na esquerda
+			recortar(no.getEsquerda(), inicio, fim, lista);
+		}
+		if (comparacaoInicio >= 0 && comparacaoFim <= 0){ // verifica se a chave nao esta no intervalo
+			lista.inserir(no.getItem());
+		}
+		if (comparacaoFim < 0){ // procura na direita
+			recortar(no.getDireita(), inicio, fim, lista);
+		}
+	}
 }
